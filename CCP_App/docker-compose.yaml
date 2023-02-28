@@ -1,0 +1,25 @@
+version: '3.7'
+
+services:
+
+  mongodb:
+    container_name: mongodb
+    image: mongo
+    ports:
+      - "27017:27017"
+
+  claimsapi:
+    container_name: springTestApi
+    image: springapi:latest
+    environment:
+      spring_data_mongodb_host: mongodb
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongodb
+  rabbitmq3:
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_ERLANG_COOKIE: 'secret cookie here'
+    ports:
+      - 15672:15672
