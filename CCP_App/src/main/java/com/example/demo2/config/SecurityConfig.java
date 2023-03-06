@@ -36,7 +36,7 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 @KeycloakConfiguration
 @EnableGlobalMethodSecurity(jsr250Enabled = true)
 @Import(KeycloakSpringBootConfigResolver.class)
-public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter{
+public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 	/**
 	 * Registers the KeycloakAuthenticationProvider with the authentication manager.
 	 */
@@ -56,16 +56,18 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter{
 		return new RegisterSessionAuthenticationStrategy(buildSessionRegistry());
 	}
 
+	/**
+	 * Default implementation of SessionRegistry .
+	 * @return Session Registry Implementation
+	 */
 	@Bean
 	protected SessionRegistry buildSessionRegistry() {
 		return new SessionRegistryImpl();
 	}
 
 	@Override
-	protected void configure(HttpSecurity http) throws Exception	{
+	protected void configure(HttpSecurity http) throws Exception {
 		super.configure(http);
-		http
-				.authorizeRequests()
-				.anyRequest().permitAll();
+		http.authorizeRequests().anyRequest().authenticated();
 	}
 }

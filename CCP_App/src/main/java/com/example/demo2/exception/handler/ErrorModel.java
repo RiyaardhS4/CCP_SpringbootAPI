@@ -12,42 +12,30 @@
  ************************************************************************
  *
  * Author : Riyaardh Adam
- * Created: 2023/02/14 11:54
+ * Created: 2023/02/22 14:16
  *
  ***********************************************************************/
-package com.example.demo2.model;
+package com.example.demo2.exception.handler;
 
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
-import lombok.ToString;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.Date;
 
 @Getter
 @Setter
-@ToString
-@Document(collection = "User")
-public class User {
-	@Id
-	private String id;
-	private String firstName;
-	private String lastName;
-	private String userName;
-	private String email;
+public class ErrorModel {
+	private String errorMessage;
+	private Date errorTimeStamp;
 
 	/**
-	 * Model for user class.
+	 * Constructor for ErrorModel Class.
 	 *
-	 * @param firstName user first name
-	 * @param lastName  user last name
-	 * @param email     user email address
-	 * @param userName  user username
+	 * @param errorMessage   the error that was thrown .
+	 * @param errorTimeStamp the time the error occurred.
 	 */
-	public User(String firstName, String lastName, String userName, String email) {
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.userName = userName;
-		this.email = email;
+	public ErrorModel(String error, Date errorTimeStamp, String errorResponseCode) {
+		this.errorMessage = error;
+		this.errorTimeStamp = errorTimeStamp;
 	}
 }

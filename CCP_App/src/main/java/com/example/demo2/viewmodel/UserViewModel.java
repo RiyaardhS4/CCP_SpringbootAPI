@@ -41,7 +41,7 @@ public class UserViewModel {
 	@NotNull
 	@NotBlank
 	private String userName;
-	@Email(regexp = ".+[@].+[\\.].+")
+	@Email
 	@NotNull
 	@NotBlank
 	private String email;

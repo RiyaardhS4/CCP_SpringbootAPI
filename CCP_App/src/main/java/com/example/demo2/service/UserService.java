@@ -17,27 +17,32 @@
  ***********************************************************************/
 package com.example.demo2.service;
 
-import com.example.demo2.custom.exception.NoElementFountException;
-import com.example.demo2.custom.exception.NonUpdateFieldException;
+import com.example.demo2.exception.handler.customexception.DatabaseNotAccessibleException;
+import com.example.demo2.exception.handler.customexception.NoElementFoundException;
+import com.example.demo2.exception.handler.customexception.NonUpdateFieldUserTableException;
 import com.example.demo2.model.User;
-import com.example.demo2.repository.UserRepository;
+import com.example.demo2.repository.IUserRepository;
 import com.example.demo2.viewmodel.UserViewModel;
+import gateway.UserGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
 public class UserService {
 
-	private UserRepository userRepository;
+	private IUserRepository userRepository;
+	private UserGateway userGateway;
 
 	/**
 	 * Constructor for user service to create an instance to the user repository.
 	 */
 	@Autowired
-	public UserService(UserRepository userRepository) {
+	public UserService(IUserRepository userRepository, UserGateway userGateway) {
 		this.userRepository = userRepository;
+		this.userGateway = userGateway;
 	}
 
 	/**
@@ -55,8 +60,8 @@ public class UserService {
 	 * @param user User firstName and lastName
 	 */
 	public void insertUser(UserViewModel user) {
-			User userData = new User(user.getFirstName(), user.getLastName(), user.getUserName(), user.getEmail());
-			userRepository.insert(userData);
+		User userData = userGateway.convertUserToUserModel(user);
+		userRepository.insert(userData);
 	}
 
 	/**
@@ -64,24 +69,26 @@ public class UserService {
 	 *
 	 * @param user User firstName , lastName , email and username.
 	 */
-	public void updateUser(UserViewModel user) {
+	public void updateUser(UserViewModel model)
+			throws NoElementFoundException, NonUpdateFieldUserTableException, DatabaseNotAccessibleException {
 
-		User foundUser;
+		try {
 
-		var data = userRepository.findById(user.getId());
-		if (!data.isEmpty()) {
-			foundUser = data.get();
-			if (user.getUserName().equals(foundUser.getUserName())) {
-				foundUser.setFirstName(user.getFirstName());
-				foundUser.setLastName(user.getLastName());
-				foundUser.setEmail(user.getEmail());
-				userRepository.save(foundUser);
+			var data = userRepository.findById(model.getId());
+			if (!data.isEmpty()) {
+				User user = userGateway.convertUserToUserModel(model);
+				User foundUser = data.get();
+				if (user.getUserName().equals(foundUser.getUserName())) {
+					userRepository.save(user);
 
+				} else {
+					throw new NonUpdateFieldUserTableException();
+				}
 			} else {
-				throw new NonUpdateFieldException();
+				throw new NoElementFoundException();
 			}
-		} else {
-			throw new NoElementFountException();
+		} catch (DatabaseNotAccessibleException exception) {
+			throw exception;
 		}
 	}
 }

@@ -1,10 +1,11 @@
 package com.example.demo2.service;
 
-import com.example.demo2.custom.exception.NonUpdateFieldException;
-import com.example.demo2.exception.handler.GlobalExceptionHandler;
+import com.example.demo2.exception.handler.customexception.NoElementFoundException;
+import com.example.demo2.exception.handler.customexception.NonUpdateFieldUserTableException;
 import com.example.demo2.model.User;
-import com.example.demo2.repository.UserRepository;
+import com.example.demo2.repository.IUserRepository;
 import com.example.demo2.viewmodel.UserViewModel;
+import gateway.UserGateway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -37,21 +38,22 @@ import static org.mockito.Mockito.*;
 public class UserServiceTest {
 
 	@Mock
-	UserRepository userRepository;
+	IUserRepository IUserRepository;
+
 
 	UserService service;
-	GlobalExceptionHandler exceptionHandler;
 
 	@BeforeEach
 	public void init() {
-		exceptionHandler = new GlobalExceptionHandler();
 		MockitoAnnotations.openMocks(this);
+		UserGateway userGateway = new UserGateway();
+		service = new UserService(IUserRepository,userGateway);
 		User user = new User("Riyaardh", "Adam", "DZAC6AG", "riyaardhadam@gmail.com");
-		List<User> mockData = new ArrayList<>();
-		mockData.add(user);
-		when(userRepository.findAll()).thenReturn((List<User>) mockData);
-		when(userRepository.findById(any(String.class))).thenReturn(Optional.of((User) user));
-		service = new UserService(userRepository);
+		List<User> userList = new ArrayList<>();
+		userList.add(user);
+		when(IUserRepository.findAll()).thenReturn(userList);
+		when(IUserRepository.findById(eq("1"))).thenReturn(Optional.of(user));
+
 	}
 
 	@Test
@@ -70,10 +72,11 @@ public class UserServiceTest {
 		userViewModel.setUserName("DZAC6AG");
 		userViewModel.setEmail("riyaardhadam@gmail.com");
 		service.insertUser(userViewModel);
-		verify(userRepository,times(1)).insert(any(User.class));
+		verify(IUserRepository,times(1)).insert(any(User.class));
 	}
 	@Test
-	public void updateUser_UpdateSuccessful_VerifyUpdateCalled() {
+	public void updateUser_UpdateSuccessful_VerifyUpdateCalled()
+			throws NoElementFoundException, NonUpdateFieldUserTableException {
 
 
 		UserViewModel userViewModel = new UserViewModel();
@@ -83,7 +86,7 @@ public class UserServiceTest {
 		userViewModel.setUserName("DZAC6AG");
 		userViewModel.setEmail("riyaardhadam@gmail.com");
 		service.updateUser(userViewModel);
-		verify(userRepository,times(1)).save(any(User.class));
+		verify(IUserRepository,times(1)).save(any(User.class));
 	}
 
 	@Test
@@ -97,7 +100,7 @@ public class UserServiceTest {
 		userViewModel.setUserName("Test1");
 		userViewModel.setEmail("riyaardhadam@gmail.com");
 
-		assertThrows(NonUpdateFieldException.class,()->{
+		assertThrows(NonUpdateFieldUserTableException.class,()->{
 			service.updateUser(userViewModel);
 		});
 	}

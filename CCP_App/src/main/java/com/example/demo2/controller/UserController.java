@@ -17,6 +17,8 @@
  ***********************************************************************/
 package com.example.demo2.controller;
 
+import com.example.demo2.exception.handler.customexception.NoElementFoundException;
+import com.example.demo2.exception.handler.customexception.NonUpdateFieldUserTableException;
 import com.example.demo2.model.User;
 import com.example.demo2.service.UserService;
 import com.example.demo2.viewmodel.UserViewModel;
@@ -41,44 +43,48 @@ public class UserController {
 
 	/**
 	 * Constructor for the User Controller which creates a single instance of the User Service .
+	 *
 	 * @param userService instance to the user service .
 	 */
 	@Autowired
-	public UserController(UserService userService){
+	public UserController(UserService userService) {
 		this.userService = userService;
 	}
+
 	/**
-	 *Add a user to the user table.
+	 * Add a user to the user table.
+	 *
 	 * @param user User entity passing firstName and lastName
 	 * @return response entity that record has been inserted
 	 */
 	@PostMapping()
 	public ResponseEntity insertUser(@Valid @RequestBody UserViewModel user) {
 		userService.insertUser(user);
-		return new  ResponseEntity<>(HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	/**
 	 * Get all users .
+	 *
 	 * @return list of users
 	 */
 	@GetMapping()
-	@RolesAllowed("manager")
+	//@RolesAllowed("manager")
 	public ResponseEntity<List<User>> getUsers() {
 		return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
 	}
 
 	/**
 	 * Update a user record.
+	 *
 	 * @param user the updated user information that is retrieved from the client
 	 * @return a http response 200 to inform the client , the data was uploaded successfully .
 	 */
 	@PutMapping
-	public ResponseEntity updateUser(@Valid @RequestBody UserViewModel user){
-
+	public ResponseEntity updateUser(@Valid @RequestBody UserViewModel user)
+			throws NoElementFoundException, NonUpdateFieldUserTableException {
 		userService.updateUser(user);
 		return new ResponseEntity(HttpStatus.OK);
 	}
-
 
 }

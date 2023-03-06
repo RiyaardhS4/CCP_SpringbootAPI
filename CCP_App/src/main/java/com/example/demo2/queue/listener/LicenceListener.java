@@ -23,6 +23,7 @@ import com.example.demo2.service.LicenceService;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.messaging.Sink;
+import com.google.gson.Gson;
 
 @EnableBinding(Sink.class)
 public class LicenceListener {
@@ -30,19 +31,22 @@ public class LicenceListener {
 	LicenceService licenceService;
 
 	/**
-	 *  Constructor for  the licence listener .
+	 * Constructor for  the licence listener .
+	 *
 	 * @param licenceService instance of the licence service that is used to connect to the database.
 	 */
 	public LicenceListener(LicenceService licenceService) {
-		this.licenceService=licenceService;
+		this.licenceService = licenceService;
 	}
 
 	/**
 	 * Queue listener that waits for licences from the queue and inserts licences to the database on licence arrival.
+	 *
 	 * @param licence the licence information that will be inserted to the database .
 	 */
 	@StreamListener(Sink.INPUT)
-	public void queueListener(Licence licence){
+	public void queueListener(String licenceData) {
+		Licence licence = new Gson().fromJson(licenceData, Licence.class);
 		licenceService.addLicence(licence);
 	}
 }

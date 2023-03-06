@@ -18,24 +18,20 @@
 package com.example.demo2.service;
 
 import com.example.demo2.model.Licence;
-import com.example.demo2.model.User;
-import com.example.demo2.repository.LicenceRepository;
-import com.example.demo2.repository.UserRepository;
+import com.example.demo2.repository.ILicenceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class LicenceService {
 
-	private LicenceRepository licenceRepository;
+	private ILicenceRepository licenceRepository;
 
 	/**
 	 * Constructor for licence service to create an instance to the licence repository.
 	 */
 	@Autowired
-	public LicenceService(LicenceRepository licenceRepository) {
+	public LicenceService(ILicenceRepository licenceRepository) {
 		this.licenceRepository = licenceRepository;
 	}
 
@@ -43,9 +39,7 @@ public class LicenceService {
 	 * Using the licence repository to add a licence to the database .
 	 */
 	public void addLicence(Licence licence) {
-		 licenceRepository.insert(licence);
+		licenceRepository.insert(licence);
 	}
-
-
 
 }

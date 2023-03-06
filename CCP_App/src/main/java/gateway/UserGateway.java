@@ -12,42 +12,27 @@
  ************************************************************************
  *
  * Author : Riyaardh Adam
- * Created: 2023/02/14 11:54
+ * Created: 2023/03/06 07:23
  *
  ***********************************************************************/
-package com.example.demo2.model;
+package gateway;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
-import lombok.ToString;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import com.example.demo2.model.User;
+import com.example.demo2.viewmodel.UserViewModel;
+import org.keycloak.jose.jwk.JWK;
 
-@Getter
-@Setter
-@ToString
-@Document(collection = "User")
-public class User {
-	@Id
-	private String id;
-	private String firstName;
-	private String lastName;
-	private String userName;
-	private String email;
+public class UserGateway {
 
 	/**
-	 * Model for user class.
-	 *
-	 * @param firstName user first name
-	 * @param lastName  user last name
-	 * @param email     user email address
-	 * @param userName  user username
+	 * Converts a User View Model to a User Model that can be used by the user repository .
+	 * @param model user view model .
+	 * @return user model .
 	 */
-	public User(String firstName, String lastName, String userName, String email) {
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.userName = userName;
-		this.email = email;
+	public User convertUserToUserModel(UserViewModel model){
+
+		User user = new User(model.getFirstName(), model.getLastName(), model.getUserName(), model.getEmail());
+
+		return user;
 	}
+
 }

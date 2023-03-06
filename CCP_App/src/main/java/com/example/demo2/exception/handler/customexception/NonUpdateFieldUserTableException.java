@@ -12,42 +12,13 @@
  ************************************************************************
  *
  * Author : Riyaardh Adam
- * Created: 2023/02/14 11:54
+ * Created: 2023/02/21 11:21
  *
  ***********************************************************************/
-package com.example.demo2.model;
+package com.example.demo2.exception.handler.customexception;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
-import lombok.ToString;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-@Getter
-@Setter
-@ToString
-@Document(collection = "User")
-public class User {
-	@Id
-	private String id;
-	private String firstName;
-	private String lastName;
-	private String userName;
-	private String email;
-
-	/**
-	 * Model for user class.
-	 *
-	 * @param firstName user first name
-	 * @param lastName  user last name
-	 * @param email     user email address
-	 * @param userName  user username
-	 */
-	public User(String firstName, String lastName, String userName, String email) {
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.userName = userName;
-		this.email = email;
-	}
+/**
+ * Exception thrown when there is an attempt to update a field in the user table that is not allowed to be updated .
+ */
+public class NonUpdateFieldUserTableException extends Exception {
 }
